@@ -1,9 +1,12 @@
 import path from 'node:path';
+import process from 'node:process';
 import { URL, fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitepress';
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs';
 
 const __dirname = path.dirname(fileURLToPath(new URL(import.meta.url)));
+
+const isLatest = process.env.DOCS_VERSION === 'latest';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -16,6 +19,20 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Documentation', link: '/requirement-and-installation' },
       { text: 'Download', link: 'https://rotki.com/download' },
+      {
+        text: isLatest ? 'Latest' : 'Stable',
+        items: [
+          isLatest
+            ? {
+                text: 'Stable',
+                link: 'https://lukicenturi.github.io/rotki-docs/',
+              }
+            : {
+                text: 'Latest',
+                link: 'https://lukicenturi.github.io/rotki-docs/latest/',
+              },
+        ],
+      },
     ],
 
     sidebar: [
@@ -108,4 +125,7 @@ export default defineConfig({
     },
   },
   srcExclude: ['**/README.md', '**/LICENSE.md'],
+  rewrites: {
+    'latest/:path*': ':path*',
+  },
 });
